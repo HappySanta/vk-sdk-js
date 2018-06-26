@@ -354,8 +354,18 @@ VkSdk.setWidget(type, code)
     .catch( error => console.log('Cообщение об ошибке: ', error) )
 ```
 
+## Как обновить пакет в npm 
+
+Обновить код, в package.json изменить версию, затем:
+
+```sh
+$ npm run prepublish
+$ npm publish
+```
+
+
 ## License
 
-???
+MIT
 
 

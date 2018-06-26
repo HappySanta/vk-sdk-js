@@ -24,7 +24,7 @@
     "vkapi"
   ],
   "author": "happysanta",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/kachemirova/vk-sdk-js/issues"
   },
