@@ -1,0 +1,40 @@
+{
+  "name": "vk-sdk-js",
+  "version": "1.0.0",
+  "description": "JS SDK for VK",
+  "main": "index.js",
+  "scripts": {
+    "compile": "babel --presets es2015,stage-0 -d lib/ src/",
+    "prepublish": "npm run compile"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kachemirova/vk-sdk-js.git"
+  },
+  "keywords": [
+    "vk",
+    "api",
+    "vkontakte",
+    "vk",
+    "api",
+    "vk-api",
+    "vk-app",
+    "vkontakte-sdk",
+    "vkontakte-api",
+    "vkapi"
+  ],
+  "author": "happysanta",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kachemirova/vk-sdk-js/issues"
+  },
+  "homepage": "https://github.com/kachemirova/vk-sdk-js#readme",
+  "dependencies": {
+    "query-string": "^5.0.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1"
+  }
+}
