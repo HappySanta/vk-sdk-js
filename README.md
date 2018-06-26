@@ -361,6 +361,8 @@ VkSdk.setWidget(type, code)
 Обновить код, в package.json изменить версию, затем:
 
 ```sh
+$ npm whoami // проверить авторизован ли пользователь, если нет, то следующая команда авторизует
+$ npm adduser
 $ npm publish
 ```
 
