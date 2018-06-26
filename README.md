@@ -18,9 +18,11 @@ import VkSdk from "@happysanta/vk-sdk"
 VkSdk.init()
     .then(() => {
         console.log('success')
+        // Здесь рендерится основной компонент приложения
     })
     .catch(e => {
         console.log(e)
+        // Здесь рендерится основной компонент с сообщением об ошибке
     })
 ```
 
