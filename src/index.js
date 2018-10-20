@@ -111,7 +111,9 @@ export default class VkSdk {
                             VkSdk.api(method, params,raw).then(resolve).catch(reject)
                         }, 999 )
                     } else {
-                        reject(new Error(JSON.stringify(res.error)))
+                        const err = new Error(res.error.error_msg)
+                        err.code = res.error.error_code
+                        reject(err)
                     }
                 } else {
                     reject(new Error(JSON.stringify(res)))
@@ -346,10 +348,11 @@ export default class VkSdk {
      * https://vk.com/dev/widget_share
      * Открывает оконо шаринга в ДЕСКТОП версии приложения также как и скрипт https://vk.com/js/api/share.js
      */
-    static desktopShare(url, image, title) {
+    static desktopShare(url, image, title, comment = '') {
         let params = {
             title: title,
             image: image,
+            comment: comment,
             noparse: "1",
         }
 
@@ -455,6 +458,129 @@ export default class VkSdk {
                 let vk = window['VK']
                 vk.callMethod('showAppWidgetPreviewBox', type, code)
             }
+        })
+    }
+
+    static watchForPayment(timeout) {
+        return new Promise((resolve, reject) => {
+            const vk = window['VK']
+            let rejectVkCallback = () => reject()
+            let proxyCallback = (event) => {
+                vk.removeCallback('onExternalAppDone', proxyCallback)
+                vk.removeCallback('onExternalAppFail', rejectVkCallback)
+                vk.removeCallback('onExternalAppClose', rejectVkCallback)
+                vk.removeCallback('onExternalAppCancel', rejectVkCallback)
+                resolve(event)
+            }
+            rejectVkCallback = () => {
+                vk.removeCallback('onExternalAppDone', proxyCallback)
+                vk.removeCallback('onExternalAppFail', rejectVkCallback)
+                vk.removeCallback('onExternalAppClose', rejectVkCallback)
+                vk.removeCallback('onExternalAppCancel', rejectVkCallback)
+                reject()
+            }
+            vk.addCallback('onExternalAppDone', proxyCallback)
+            vk.addCallback('onExternalAppFail', rejectVkCallback)
+            vk.addCallback('onExternalAppClose', rejectVkCallback)
+            vk.addCallback('onExternalAppCancel', rejectVkCallback)
+
+            setTimeout(rejectVkCallback, timeout)
+        })
+    }
+
+    static payToGroup(sum, description, groupId = null) {
+        if (groupId === null) {
+            groupId = VkSdk.getStartParams().groupId
+        }
+        return new Promise((resolve, reject) => {
+            const vk = window['VK']
+            let rejectVkCallback = () => reject()
+            let proxyCallback = (event) => {
+                vk.removeCallback('onExternalAppDone', proxyCallback)
+                vk.removeCallback('onExternalAppFail', rejectVkCallback)
+                vk.removeCallback('onExternalAppClose', rejectVkCallback)
+                vk.removeCallback('onExternalAppCancel', rejectVkCallback)
+                resolve(event)
+            }
+            rejectVkCallback = () => {
+                vk.removeCallback('onExternalAppDone', proxyCallback)
+                vk.removeCallback('onExternalAppFail', rejectVkCallback)
+                vk.removeCallback('onExternalAppClose', rejectVkCallback)
+                vk.removeCallback('onExternalAppCancel', rejectVkCallback)
+                reject()
+            }
+            vk.addCallback('onExternalAppDone', proxyCallback)
+            vk.addCallback('onExternalAppFail', rejectVkCallback)
+            vk.addCallback('onExternalAppClose', rejectVkCallback)
+            vk.addCallback('onExternalAppCancel', rejectVkCallback)
+
+            const params = {
+                action: "pay-to-group",
+                amount: sum,
+                description: description,
+                group_id: groupId
+            }
+            vk.callMethod("openExternalApp", PAY_APP, params)
+        })
+    }
+
+    static payToService(params) {
+        return new Promise((resolve, reject) => {
+            const vk = window['VK']
+            let rejectVkCallback = () => reject()
+            let proxyCallback = (event) => {
+                vk.removeCallback('onExternalAppDone', proxyCallback)
+                vk.removeCallback('onExternalAppFail', rejectVkCallback)
+                vk.removeCallback('onExternalAppClose', rejectVkCallback)
+                vk.removeCallback('onExternalAppCancel', rejectVkCallback)
+                resolve(event)
+            }
+            rejectVkCallback = () => {
+                vk.removeCallback('onExternalAppDone', proxyCallback)
+                vk.removeCallback('onExternalAppFail', rejectVkCallback)
+                vk.removeCallback('onExternalAppClose', rejectVkCallback)
+                vk.removeCallback('onExternalAppCancel', rejectVkCallback)
+                reject()
+            }
+            vk.addCallback('onExternalAppDone', proxyCallback)
+            vk.addCallback('onExternalAppFail', rejectVkCallback)
+            vk.addCallback('onExternalAppClose', rejectVkCallback)
+            vk.addCallback('onExternalAppCancel', rejectVkCallback)
+
+            vk.callMethod("openExternalApp", 'vkpay', params)
+        })
+    }
+
+    static payToUser(sum, description, userId) {
+        return new Promise((resolve, reject) => {
+            const vk = window['VK']
+            let rejectVkCallback = () => reject()
+            let proxyCallback = (event) => {
+                vk.removeCallback('onExternalAppDone', proxyCallback)
+                vk.removeCallback('onWindowFocus', rejectVkCallback)
+                vk.removeCallback('onExternalAppClose', rejectVkCallback)
+                vk.removeCallback('onExternalAppCancel', rejectVkCallback)
+                resolve(event)
+            }
+            rejectVkCallback = () => {
+                vk.removeCallback('onExternalAppDone', proxyCallback)
+                vk.removeCallback('onWindowFocus', rejectVkCallback)
+                vk.removeCallback('onExternalAppClose', rejectVkCallback)
+                vk.removeCallback('onExternalAppCancel', rejectVkCallback)
+                reject()
+            }
+            vk.addCallback('onExternalAppDone', proxyCallback)
+            vk.addCallback('onWindowFocus', rejectVkCallback)
+            vk.addCallback('onExternalAppClose', rejectVkCallback)
+            vk.addCallback('onExternalAppCancel', rejectVkCallback)
+
+            const params = {
+                action: "pay-to-user",
+                amount: sum,
+                description: description,
+                user_id: userId
+            }
+            vk.callMethod("openExternalApp", PAY_APP, params)
         })
     }
 
