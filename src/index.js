@@ -520,7 +520,7 @@ export default class VkSdk {
                 description: description,
                 group_id: groupId
             }
-            vk.callMethod("openExternalApp", PAY_APP, params)
+            vk.callMethod("openExternalApp", "vkpay", params)
         })
     }
 
