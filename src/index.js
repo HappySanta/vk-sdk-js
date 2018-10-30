@@ -461,9 +461,11 @@ export default class VkSdk {
         })
     }
 
+    static watchForPaymentReject = null
     static watchForPayment(timeout) {
         return new Promise((resolve, reject) => {
             const vk = window['VK']
+            let ttl = null
             let rejectVkCallback = () => reject()
             let proxyCallback = (event) => {
                 vk.removeCallback('onExternalAppDone', proxyCallback)
@@ -473,6 +475,8 @@ export default class VkSdk {
                 resolve(event)
             }
             rejectVkCallback = () => {
+                clearTimeout(ttl)
+                VkSdk.watchForPaymentReject=null
                 vk.removeCallback('onExternalAppDone', proxyCallback)
                 vk.removeCallback('onExternalAppFail', rejectVkCallback)
                 vk.removeCallback('onExternalAppClose', rejectVkCallback)
@@ -484,11 +488,15 @@ export default class VkSdk {
             vk.addCallback('onExternalAppClose', rejectVkCallback)
             vk.addCallback('onExternalAppCancel', rejectVkCallback)
 
-            setTimeout(rejectVkCallback, timeout)
+            ttl = setTimeout(rejectVkCallback, timeout)
+            VkSdk.watchForPaymentReject = rejectVkCallback
         })
     }
 
     static payToGroup(sum, description, groupId = null) {
+        if (VkSdk.watchForPaymentReject) {
+            VkSdk.watchForPaymentReject()
+        }
         if (groupId === null) {
             groupId = VkSdk.getStartParams().groupId
         }
@@ -525,6 +533,9 @@ export default class VkSdk {
     }
 
     static payToService(params) {
+        if (VkSdk.watchForPaymentReject) {
+            VkSdk.watchForPaymentReject()
+        }
         return new Promise((resolve, reject) => {
             const vk = window['VK']
             let rejectVkCallback = () => reject()
@@ -552,6 +563,9 @@ export default class VkSdk {
     }
 
     static payToUser(sum, description, userId) {
+        if (VkSdk.watchForPaymentReject) {
+            VkSdk.watchForPaymentReject()
+        }
         return new Promise((resolve, reject) => {
             const vk = window['VK']
             let rejectVkCallback = () => reject()
