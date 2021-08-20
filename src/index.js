@@ -8,7 +8,7 @@ export default class VkSdk {
     static startParams = null
     static startSearch = ""
     static limitActionInterval = 3000
-    static apiVersion = '5.78'
+    static apiVersion = '5.131'
 
     /**
      * @returns {VkStartParams}
